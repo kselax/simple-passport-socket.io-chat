@@ -1,0 +1,61 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  div status: #[span(id="status" styte={color: "red"})]
+  div(id="public" style={border: "1px solid red", height: "150px", overflow: "auto"})
+  input(id="message")
+  button(id="send") send
+
+  script(src="socket.io/socket.io.js")
+
+  script.
+    const user = !{JSON.stringify(user)}
+    console.log('user = ', user)
+
+    const status = document.getElementById('status')
+    const public = document.getElementById('public')
+    const message = document.getElementById('message')
+    const send = document.getElementById('send')
+
+    const socket = io("http://localhost:3002")
+
+    socket.on('connect', () => {
+      status.innerHTML = 'connected'
+    })
+
+    socket.on('disconnect', () => {
+      status.innerHTML = 'disconnected'
+    })
+
+    socket.on('reconnect', () => {
+      status.innerHTML = 'connected'
+    })
+
+    socket.on('error', e => {
+      console.log('e = ', e)
+      status.innerHTML = 'disconnected'
+    })
+
+    socket.on('public', data => {
+      public.innerHTML += '<p>' + data + '</p>'
+    })
+    
+    const sendMessage = () => {
+      public.innerHTML += '<p>' + message.value + '</p>'
+      socket.emit('public', message.value)
+      message.value = ''
+      public.scrollTop = public.scrollHeight
+    }
+
+    send.addEventListener('click', () => {
+      sendMessage()
+    })
+
+    message.addEventListener('keypress', e => {
+      const key = e.which || e.keyCode
+      if (key === 13) {
+        sendMessage()
+      }
+    })

@@ -1,0 +1,9 @@
+DB:
+  connectionLimit: 10
+  host: localhost
+  user: test
+  password: test
+  database: registration
+SESSION:
+  key: my_session
+  secret: 'keyboard cat'

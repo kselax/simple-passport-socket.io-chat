@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1 #{title}
+
+  form(action="/" method="POST")
+    .row
+      label login: 
+        input(name="username")
+    .row
+      label pass:
+        input(name="password" type="password")
+    if error
+      .row(style={color: "red"}) #{error}
+    .row
+      button log in
